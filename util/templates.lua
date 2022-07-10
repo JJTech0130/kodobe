@@ -1,7 +1,5 @@
 -- setup a non-global environment
-local templates = {}
-setmetatable(templates, {__index = _G})
-setfenv(1, templates)
+local templates = require("util.env").setupEnv()
 
 -- load required modules
 local xml = require("util.xml")

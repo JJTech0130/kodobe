@@ -46,12 +46,9 @@ function buildSignInRequest(type, username, password, authCert)
 end
 
 -- main
-local authInfo = getAuthenticationServiceInfo()
-local actCert = getActivationServiceCertificate()
+local authServiceInfo = getAuthenticationServiceInfo()
+local activationCert = getActivationServiceCertificate()
 local deviceKey = crypto.generateDeviceKey()
-b64decode = require("ffi/sha2").base642bin
-deviceKey = b64decode("vj4m+Gqjl3FPgFM/VJEuyw==")
-print(deviceKey)
-local login = crypto.encryptLogin("", "", deviceKey, authInfo.certificate)
-print(login)
-templates.signInRequest()
+-- encrypto anon credentials (no use an password)
+local login = crypto.encryptLogin("", "", deviceKey, authServiceInfo.certificate)
+print(templates.signInRequest("anonymous", login))

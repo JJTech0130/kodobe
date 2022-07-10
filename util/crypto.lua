@@ -1,7 +1,5 @@
--- Setup a non-global environment
-local crypto = {}
-setmetatable(crypto, {__index = _G})
-setfenv(1, crypto)
+-- setup a non-global environment
+local crypto = require("util.env").setupEnv()
 
 -- load required libraries
 local openssl = require("resty.openssl")

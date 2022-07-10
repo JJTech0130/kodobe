@@ -1,10 +1,7 @@
 -- light wrapper around xml2lua, providing a simple interface
 
 -- setup a non-global environment
-local xml = {}
-setmetatable(xml, {__index = _G})
-setfenv(1, xml)
-
+local xml = require("util.env").setupEnv()
 -- load required modules
 local xml2lua = require("util.xml.xml2lua")
 local treehandler = require("util.xml.xmlhandler.tree")
