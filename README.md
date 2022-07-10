@@ -1,21 +1,14 @@
-In order to test this on your local machine, you need to install the dependencies.
+### Testing without KOReader
+I have included some stubs in the `koreader` directory.
+Use set_paths.lua to add it to the search path.
 
-Simplest method is Nix:
-```nix
-nix-env -if ./build.nix
-```
-
-Then run
 ```sh
-lua ./main.lua
-```
-and
-```sh
-luacheck ./main.lua
+lua -l set_paths ./main.lua
 ```
 
-OpenSSL bindings for Lua were taken from https://github.com/fffonion/lua-resty-openssl.
+You will also need to install luasocket and luasec installed with luarocks.
+
+### Acknowledgements
+OpenSSL FFI bindings for Lua were modified from https://github.com/fffonion/lua-resty-openssl.
 
 xml2lua is from https://github.com/manoelcampos/xml2lua
-
-Note about ffi/sha2: it comes for KOReader and should be removed in the final plugin, it's just for local testing...

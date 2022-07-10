@@ -1,0 +1,1 @@
+package.path = ";./koreader/?.lua;./koreader/?/init.lua" .. package.path
