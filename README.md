@@ -3,7 +3,7 @@ I have included some stubs in the `koreader` directory.
 Use set_paths.lua to add it to the search path.
 
 ```sh
-lua -l set_paths ./main.lua
+lua -l set_paths ./adobe/main.lua
 ```
 
 You will also need to install `luasocket` and `luasec` installed using luarocks.
