@@ -1,5 +1,4 @@
--- setup a non-global environment
-local crypto = require("util.env").setupEnv()
+local crypto = {}
 
 -- load required libraries
 local openssl = require("resty.openssl")
@@ -8,11 +7,11 @@ local x509 = require("resty.openssl.x509")
 local rand = require("resty.openssl.rand")
 local util = require("util.util")
 
-function generateDeviceKey()
+function crypto.generateDeviceKey()
     return rand.bytes(16)
 end
 
-function encryptLogin(username, password, deviceKey, authCert)
+function crypto.encryptLogin(username, password, deviceKey, authCert)
     -- construct buffer (devicekey + len(username) + username + len(password) + password)
     local buffer = deviceKey
     buffer = buffer .. string.char(username:len())

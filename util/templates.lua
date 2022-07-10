@@ -1,10 +1,10 @@
 -- setup a non-global environment
-local templates = require("util.env").setupEnv()
+local templates = {}
 
 -- load required modules
 local xml = require("util.xml")
 
-function signInRequest(method, signInData, publicAuthKey, encryptedPrivateAuthKey, publicLicenseKey, encryptedPrivateLicenseKey)
+function templates.signInRequest(method, signInData, publicAuthKey, encryptedPrivateAuthKey, publicLicenseKey, encryptedPrivateLicenseKey)
     local tb = {
         _attr = { method = method},
         signInData = signInData,

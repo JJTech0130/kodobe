@@ -1,22 +1,21 @@
--- setup a non-global environment
-local util = require("util.env").setupEnv()
+local util = {}
 
 -- load required modules
 local base642bin = require("ffi.sha2").base642bin
 local bin2base64 = require("ffi.sha2").bin2base64
 
 -- light wrappers for more consistent naming
-base64 = {}
-function base64.encode(string)
+util.base64 = {}
+function util.base64.encode(string)
     return bin2base64(string)
 end
 
-function base64.decode(string)
+function util.base64.decode(string)
     return base642bin(string)
 end
 
 -- shallow copy a table (why is this not built-in?)
-function tableShallowCopy(original)
+function util.tableShallowCopy(original)
     local copy = {}
     for key, value in pairs(original) do
         copy[key] = value
