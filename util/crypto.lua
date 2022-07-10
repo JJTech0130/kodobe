@@ -1,10 +1,10 @@
 local crypto = {}
 
 -- load required libraries
-local openssl = require("resty.openssl")
+local openssl = require("openssl")
 openssl.load_library()
-local x509 = require("resty.openssl.x509")
-local rand = require("resty.openssl.rand")
+local x509 = require("openssl.x509")
+local rand = require("openssl.rand")
 local util = require("util.util")
 
 function crypto.generateDeviceKey()
