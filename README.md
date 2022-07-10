@@ -6,9 +6,8 @@ Use set_paths.lua to add it to the search path.
 lua -l set_paths ./main.lua
 ```
 
-You will also need to install luasocket and luasec installed with luarocks.
+You will also need to install `luasocket` and `luasec` installed using luarocks.
 
 ### Acknowledgements
-OpenSSL FFI bindings for Lua were modified from https://github.com/fffonion/lua-resty-openssl.
-
-xml2lua is from https://github.com/manoelcampos/xml2lua
++ OpenSSL FFI bindings were modified from https://github.com/fffonion/lua-resty-openssl.
++ `xml2lua` is from https://github.com/manoelcampos/xml2lua.
