@@ -2,10 +2,10 @@ package.path = ";./dependencies/?.lua;./dependencies/?/init.lua" .. package.path
 -- load required modules
 local http      = require("socket.http")    -- HTTP(S)
 local url       = require("socket.url")     -- URL manipulation
-local util      = require("util.util")      -- basic utility functions
-local crypto    = require("util.crypto")    -- crypto helper
-local xml       = require("util.xml")       -- xml helper
-local templates = require("util.templates") -- xml templates
+local util      = require("adobe.util.util")      -- basic utility functions
+local crypto    = require("adobe.util.crypto")    -- crypto helper
+local xml       = require("adobe.util.xml")       -- xml helper
+local templates = require("adobe.templates") -- xml templates
 
 -- Eden2 activation service 
 local EDEN_URL = url.parse("https://adeactivate.adobe.com/adept")

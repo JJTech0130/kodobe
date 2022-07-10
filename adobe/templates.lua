@@ -2,7 +2,7 @@
 local templates = {}
 
 -- load required modules
-local xml = require("util.xml")
+local xml = require("adobe.util.xml")
 
 function templates.signInRequest(method, signInData, publicAuthKey, encryptedPrivateAuthKey, publicLicenseKey, encryptedPrivateLicenseKey)
     local tb = {
