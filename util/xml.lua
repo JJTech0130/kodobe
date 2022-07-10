@@ -3,8 +3,8 @@
 local xml = {}
 
 -- load required modules
-local xml2lua = require("util.xml.xml2lua")
-local treehandler = require("util.xml.xmlhandler.tree")
+local xml2lua = require("xml2lua")
+local treehandler = require("xmlhandler.tree")
 
 -- add an xml namespace to the table
 function xml.addNamespace(tb, prefix, namespace)
