@@ -9,6 +9,6 @@ lua -l set_paths ./main.lua
 You will also need to install luasocket and luasec installed with luarocks.
 
 ### Acknowledgements
-+ OpenSSL FFI bindings for Lua were modified from https://github.com/fffonion/lua-resty-openssl
-+ SLAXML is from https://github.com/Phrogz/SLAXML
-+ xml2lua is from https://github.com/manoelcampos/xml2lua
+OpenSSL FFI bindings for Lua were modified from https://github.com/fffonion/lua-resty-openssl.
+
+xml2lua is from https://github.com/manoelcampos/xml2lua
