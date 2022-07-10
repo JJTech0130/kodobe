@@ -23,4 +23,10 @@ function util.tableShallowCopy(original)
     return copy
 end
 
+function util.endpoint(base, path)
+    local endpoint = util.tableShallowCopy(base)
+    endpoint.path = endpoint.path .. "/" .. path
+    return endpoint
+end
+
 return util
