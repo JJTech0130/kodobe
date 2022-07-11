@@ -62,14 +62,15 @@ function adobe.signIn(method, username, password, authCert)
         source = ltn12.source.string(signInRequest)
     }
     resp = table.concat(resp)
-    print(resp)
+    --print(resp)
     resp = xml.deserialize(resp)
     
     if deviceKey:decrypt(base64.decode(resp.credentials.encryptedPrivateLicenseKey )) ~= licenseKey:topkcs8() then
         -- this account has already been signed into
         print("WARNING: License key from server does not match ours, replacing our key")
-        licenseKey, err = crypto.key.new(deviceKey:decrypt(base64.decode(resp.credentials.encryptedPrivateLicenseKey )))
+        local lk, err = crypto.key.new(deviceKey:decrypt(base64.decode(resp.credentials.encryptedPrivateLicenseKey )))
         if err ~= nil then error(err) end
+        licenseKey = lk
     end
     return { deviceKey = deviceKey, authKey = authKey, licenseKey = licenseKey }
 end
