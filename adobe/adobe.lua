@@ -37,41 +37,41 @@ function adobe.getActivationServiceCertificate()
     return info.certificate
 end
 
-function adobe.signIn(method, username, password)
-    local authCert = adobe.getAuthenticationServiceInfo().certificate
+function adobe.signIn(method, username, password, authCert)
+    local deviceKey = crypto.deviceKey.new()
 
-    local deviceKey = crypto.generateDeviceKey()
-
-    local authKey = crypto.generateKey(deviceKey)
-    local licenseKey = crypto.generateKey(deviceKey)
+    local authKey = crypto.key.new()
+    local licenseKey = crypto.key.new()
 
     local login = crypto.encryptLogin(username, password, deviceKey, authCert)
-
     local signInRequest = xml.adobe({
         _attr = { method = method},
         signInData = login,
-        publicAuthKey = base64.encode(authKey.public),
-        encryptedPrivateAuthKey = base64.encode(authKey.encrypted),
-        publicLicenseKey = base64.encode(licenseKey.public),
-        encryptedPrivateLicenseKey = base64.encode(licenseKey.encrypted)
+        publicAuthKey = base64.encode(authKey.pkey:tostring("public", "DER")),
+        encryptedPrivateAuthKey = base64.encode(deviceKey:encrypt(authKey:topkcs8())),
+        publicLicenseKey = base64.encode(licenseKey.pkey:tostring("public", "DER")),
+        encryptedPrivateLicenseKey = base64.encode(deviceKey:encrypt(licenseKey:topkcs8()))
     }, "signIn")
-
-    headers = {}
-    headers["Content-Type"] = "application/vnd.adobe.adept+xml"
-    headers["Accept"] = "*/*"
-    headers["User-Agent"] = "book2png"
 
     local resp = {}
     http.request{
         url = url.build(util.endpoint(adobe.EDEN_URL, "SignInDirect")),
         sink = ltn12.sink.table(resp),
         method = "POST",
-        headers = headers,
+        headers = { ["Content-Type"] = "application/vnd.adobe.adept+xml" },
         source = ltn12.source.string(signInRequest)
     }
     resp = table.concat(resp)
-
     print(resp)
+    resp = xml.deserialize(resp)
+    
+    if deviceKey:decrypt(base64.decode(resp.credentials.encryptedPrivateLicenseKey )) ~= licenseKey:topkcs8() then
+        -- this account has already been signed into
+        print("WARNING: License key from server does not match ours, replacing our key")
+        licenseKey, err = crypto.key.new(deviceKey:decrypt(base64.decode(resp.credentials.encryptedPrivateLicenseKey )))
+        if err ~= nil then error(err) end
+    end
+    return { deviceKey = deviceKey, authKey = authKey, licenseKey = licenseKey }
 end
 
 return adobe
