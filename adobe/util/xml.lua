@@ -30,6 +30,14 @@ function xml.addHeader(string)
     return "<?xml version=\"1.0\"?>\n" .. string
 end
 
+-- shorthand for creating an xml response for adobe
+function xml.adobe(tb, name)
+    tb = xml.addNamespace(tb, "adept", "http://ns.adobe.com/adept")
+    tb = xml.serialize(tb, "adept:" .. name)
+    tb = xml.addHeader(tb)
+    return tb
+end
+
 -- deserialize an XML string into a table
 function xml.deserialize(string)
     local handler = treehandler:new()

@@ -1,11 +1,13 @@
 local adobe = {}
 
 -- load required modules
-local http = require("socket.http")         -- HTTP(S)
-local url = require("socket.url")           -- URL manipulation
-local util = require("adobe.util.util")     -- basic utility functions
+local http   = require("socket.http")       -- HTTP(S)
+local url    = require("socket.url")        -- URL manipulation
+local util   = require("adobe.util.util")   -- basic utility functions
 local crypto = require("adobe.util.crypto") -- crypto helper
-local xml = require("adobe.util.xml")       -- xml helper
+local xml    = require("adobe.util.xml")    -- xml helper
+local base64 = require("adobe.util.util").base64
+local ltn12  = require("ltn12")             -- HTTP(S) request/response
 
 -- Eden2 activation service 
 adobe.EDEN_URL = url.parse("https://adeactivate.adobe.com/adept")
@@ -33,6 +35,46 @@ function adobe.getActivationServiceCertificate()
     local info = xml.deserialize(response).activationServiceInfo   
 
     return info.certificate
+end
+
+function adobe.signIn(method, username, password)
+    local authCert = adobe.getAuthenticationServiceInfo().certificate
+
+    local deviceKey = crypto.generateDeviceKey()
+
+    local authKey = crypto.generateKey(deviceKey)
+    local licenseKey = crypto.generateKey(deviceKey)
+
+    print(base64.encode(authKey.private))
+    local login = crypto.encryptLogin(username, password, deviceKey, authCert)
+    local signInRequest = xml.adobe({
+        _attr = { method = method},
+        signInData = login,
+        publicAuthKey = base64.encode(authKey.public),
+        encryptedPrivateAuthKey = base64.encode(authKey.encrypted),
+        publicLicenseKey = base64.encode(licenseKey.public),
+        encryptedPrivateLicenseKey = base64.encode(licenseKey.encrypted)
+    }, "signIn")
+    print(signInRequest)
+
+    -- send POST with type application/vnd.adobe.adept+xml
+    headers = {}
+    headers["Content-Type"] = "application/vnd.adobe.adept+xml"
+    headers["Accept"] = "*/*"
+    headers["User-Agent"] = "book2png"
+
+    local resp = {}
+    http.request{
+        url = url.build(util.endpoint(adobe.EDEN_URL, "SignInDirect")),
+        sink = ltn12.sink.table(resp),
+        method = "POST",
+        headers = headers,
+        source = ltn12.source.string(signInRequest)
+    }
+    
+    --local response = http.request(url.build(util.endpoint(adobe.EDEN_URL, "SignInDirect")), "POST", signInRequest, headers)
+    print(resp[1])
+    --print(signInRequest)
 end
 
 return adobe
