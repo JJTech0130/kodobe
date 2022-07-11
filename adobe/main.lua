@@ -6,7 +6,7 @@ local templates = require("adobe.templates")
 local base64 = require("adobe.util.util").base64
 
 -- main
---local authServiceInfo = adobe.getAuthenticationServiceInfo()
+local authServiceInfo = adobe.getAuthenticationServiceInfo()
 --local activationCert = adobe.getActivationServiceCertificate()
 local deviceKey = crypto.generateDeviceKey()
 -- encrypt anonymous credentials (no username or password)
