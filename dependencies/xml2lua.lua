@@ -251,4 +251,15 @@ function xml2lua.toXml(tb, tableName, level)
   return table.concat(xmltb, '\n')
 end
 
+-- Added for signing XML
+-- Returns a string representation of what the key will look like in XML format
+function xml2lua.previewKey(tagName, fieldValue, prefix)
+    local xmltb = {}
+    if prefix ~= nil then 
+        prefix = prefix .. ":"
+    else prefix = "" end
+    parseTableKeyToXml(xmltb, prefix .. tagName, fieldValue, 0)
+    return table.concat(xmltb)
+end
+
 return xml2lua
