@@ -64,6 +64,13 @@ function adobe.signIn(method, username, password, authCert)
     resp = table.concat(resp)
     --print(resp)
     resp = xml.deserialize(resp)
+
+    if resp.error ~= nil then
+        error("Server returned error: " .. resp.error._attr.data)
+    elseif resp.credentials == nil then
+        error("Server returned unexpected response")
+        print(resp)
+    end
     
     if deviceKey:decrypt(base64.decode(resp.credentials.encryptedPrivateLicenseKey )) ~= licenseKey:topkcs8() then
         -- this account has already been signed into
@@ -72,7 +79,18 @@ function adobe.signIn(method, username, password, authCert)
         if err ~= nil then error(err) end
         licenseKey = lk
     end
-    return { deviceKey = deviceKey, authKey = authKey, licenseKey = licenseKey }
+
+    return { 
+        -- generated
+        deviceKey = deviceKey, 
+        authKey = authKey, 
+        licenseKey = licenseKey,
+        -- received 
+        licenseCert = resp.credentials.licenseCertificate, 
+        user = resp.credentials.user, 
+        username = resp.credentials.username[1],
+        pkcs12 = resp.credentials.pkcs12
+    }
 end
 
 return adobe
