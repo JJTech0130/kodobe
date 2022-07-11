@@ -217,7 +217,7 @@ function xml2lua.toXml(tb, tableName, level)
          if type(k) == 'number' then
             parseTableKeyToXml(xmltb, tableName, v, level)
          else
-            level = level + 1
+            --level = level + 1
             -- If the type of the first key of the value inside the table
             -- is a number, it means we have a HashTable-like structure,
             -- in this case with keys as strings and values as arrays.
