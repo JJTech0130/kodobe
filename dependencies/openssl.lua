@@ -6,6 +6,8 @@ ngx.ERR = "[error]"
 ngx.INFO = "[info]"
 ngx.WARN = "[warn]"
 
+ngx.debug = false
+
 function ngx.log(...)
     -- get info about the function that called us
     local info = debug.getinfo(2, "Sl")
@@ -13,6 +15,9 @@ function ngx.log(...)
     local args = {...}; local str = ""
     -- remove the first argument (the log level)
     local level = args[1]
+    if level == ngx.DEBUG and ngx.debug == false then
+        return
+    end
     table.remove(args, 1)
     for i, v in ipairs(args) do 
         str = str .. v 
