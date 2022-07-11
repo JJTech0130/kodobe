@@ -31,7 +31,7 @@ end
 
 
 function util.expiration(minutes)
-    local t = os.date("!*t")
+    local t = os.date("*t")
     t.min = t.min + minutes
     return os.date("!%Y-%m-%dT%H:%M:%SZ", os.time(t))
 end
