@@ -69,8 +69,8 @@ local function load_pem_der(txt, opts, funcs)
   for f, arg in pairs(fs) do
     -- don't need BIO when loading JWK key: we parse it in Lua land
     if f == "load_jwk" then
-      local err
-      ctx, err = jwk_lib[f](txt)
+      local err = "JWK format is not supported"
+      --ctx, err = jwk_lib[f](txt)
       if ctx == nil then
         -- if fmt is explictly set to JWK, we should return an error now
         if fmt == "JWK" then
