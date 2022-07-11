@@ -70,6 +70,13 @@ function crypto.serial()
     return serial
 end
 
+-- creates a random 12 bytes, then encodes it with base64
+-- note: some other implementations use a Gregorian timestamp (in ms)
+--     for the first 8 bytes, and then a counter for the last 4 bytes
+function crypto.nonce()
+    return util.base64.encode(rand.bytes(12))
+end
+
 -- base64(sha1(serial + deviceKey))
 function crypto.fingerprint(serial, deviceKey)
     local sha1 = digest.new("SHA1")
