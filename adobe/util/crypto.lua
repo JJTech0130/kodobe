@@ -42,6 +42,15 @@ function crypto.encryptWithDeviceKey(deviceKey, data)
     return iv .. encrypted
 end
 
+-- exports the private key to PEM, then strips headers and base64 decodes
+-- for some reason that makes it PKCS#8, whereas directly using DER is not...
+local function exportPKCS8(key)
+    local pem = key:tostring("private", "PEM")
+    -- strip headers, need the % to escape the dash
+    local pkcs8 = pem:gsub("%-%-%-%-%-BEGIN PRIVATE KEY%-%-%-%-%-", ""):gsub("%-%-%-%-%-END PRIVATE KEY%-%-%-%-%-", "")
+    return util.base64.decode(pkcs8)
+end
+
 -- generate an RSA keypair
 -- if passed an (optional) device key, will return private key encrypted with it
 function crypto.generateKey(deviceKey)
@@ -53,7 +62,8 @@ function crypto.generateKey(deviceKey)
     if err ~= nil then error(err) end
 
     local public = key:tostring("public", "DER")
-    local private = key:tostring("private", "DER")
+    --local private = key:tostring("private", "DER")
+    local private = exportPKCS8(key)
 
     local encrypted = nil
     if deviceKey ~= nil then
