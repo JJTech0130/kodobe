@@ -8,6 +8,7 @@ local x509    = require("openssl.x509")
 local rand    = require("openssl.rand")
 local cipher  = require("openssl.cipher")
 local pkey    = require("openssl.pkey")
+local digest  = require("openssl.digest")
 
 local util = require("adobe.util.util")
 
@@ -57,6 +58,25 @@ function crypto.encryptLogin(username, password, deviceKey, authCert)
     local encrypted = key:encrypt(buffer)
     return util.base64.encode(encrypted)
 end
+
+-- creates a random serial
+-- TODO: make this a real serial
+function crypto.serial()
+    local rand = rand.bytes(20)
+    local serial = ""
+    for i = 1, 20 do
+        serial = serial .. string.format("%02x", rand:byte(i))
+    end
+    return serial
+end
+
+-- base64(sha1(serial + deviceKey))
+function crypto.fingerprint(serial, deviceKey)
+    local sha1 = digest.new("SHA1")
+    sha1:update(serial .. deviceKey.key)
+    return util.base64.encode(sha1:final())
+end
+
 
 -- RSA KEYS
 crypto.key = {}
