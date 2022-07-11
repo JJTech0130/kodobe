@@ -1,3 +1,29 @@
+-- NGX logging stub
+ngx = {}
+ngx.NOTICE = "[notice]"
+ngx.DEBUG = "[debug]"
+ngx.ERR = "[error]"
+ngx.INFO = "[info]"
+ngx.WARN = "[warn]"
+
+function ngx.log(...)
+    -- get info about the function that called us
+    local info = debug.getinfo(2, "Sl")
+    -- turn our arguments into a string
+    local args = {...}; local str = ""
+    -- remove the first argument (the log level)
+    local level = args[1]
+    table.remove(args, 1)
+    for i, v in ipairs(args) do 
+        str = str .. v 
+    end
+    -- get the file name after the last slash
+    local file = string.match(info.short_src, "[^/]+$")
+    -- print the info
+    print(os.date("%Y/%m/%d %X") .. " " .. level .. " " .. file .. ":" .. info.currentline .. ": " .. str)
+end
+-- END NGX logging stub
+
 local ffi = require("ffi")
 local C = ffi.C
 local ffi_cast = ffi.cast
