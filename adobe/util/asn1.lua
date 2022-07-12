@@ -25,7 +25,7 @@ end
 
 function ASN.string(str)
     local length = string.len(str)
-    return util.ASN.bytes(
+    return ASN.bytes(
         {
             math.floor(length / 256), -- upper length byte
             bit.band(length, 0xFF) -- lower length byte
@@ -38,8 +38,8 @@ function ASN.namespacedTag(namespace, name)
 end
 
 function ASN.tag(name)
-    local ns = string.match(attribute, "^[^:]+")
-    local tag = string.match(attribute, "[^:]+$")
+    local ns = string.match(name, "^[^:]+")
+    local tag = string.match(name, "[^:]+$")
     if ns == tag then
         ns = ""
     end
@@ -47,7 +47,7 @@ function ASN.tag(name)
 end
 
 function ASN.attribute(name, value)
-    out = ASN.byte(ASN.ATTRIBUTE) .. ASN.tag(name) .. ASN.string(value)
+    return ASN.byte(ASN.ATTRIBUTE) .. ASN.tag(name) .. ASN.string(value)
 end
 
 function ASN.element(name, content)
