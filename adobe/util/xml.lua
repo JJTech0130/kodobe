@@ -43,7 +43,7 @@ function xml.addHeader(string)
     return "<?xml version=\"1.0\"?>\n" .. string
 end
 
--- shorthand for creating an xml response for adobe
+-- shorthand for creating an xml request for adobe
 function xml.adobe(tb, name)
     tb = xml.addNamespace(tb, "adept", "http://ns.adobe.com/adept")
     tb = xml.serialize(tb, "adept:" .. name)
@@ -51,11 +51,11 @@ function xml.adobe(tb, name)
     return tb
 end
 
-function xml.adobeSigned(tb, name, pkey)
-    tosign = xml.addNamespace(util.deepTableCopy(tb), "http://ns.adobe.com/adept", "http://ns.adobe.com/adept")
-    local sig = crypto.signXML(pkey, tosign, "http://ns.adobe.com/adept:" .. name)
-    --print("Signature: " .. sig)
-    tb.signature = sig
+-- shorthand for creating a sign xml request for adobe
+function xml.adobeSigned(name, pkey, tb)
+    -- make a temporary copy of the table to avoid modifying the original
+    local tosign = xml.addNamespace(util.deepTableCopy(tb), "http://ns.adobe.com/adept", "http://ns.adobe.com/adept")
+    tb.signature = crypto.signXML("http://ns.adobe.com/adept:" .. name, pkey, tosign)
     tb = xml.addNamespace(tb, "adept", "http://ns.adobe.com/adept")
     tb = xml.serialize(tb, "adept:" .. name)
     tb = xml.addHeader(tb)

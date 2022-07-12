@@ -120,26 +120,12 @@ function crypto.key:topkcs8()
     return util.base64.decode(pkcs8)
 end
 
-local function xmlconcat(tb)
-    local c = ""
-    for k, v in pairs(tb) do
-        if k ~= "_attr" then
-            if type(v) == "table" then
-                c = c .. previewXML(k, xmlconcat(v), "adobe")
-            else
-                c = c .. previewXML(k, v, "adobe")
-            end
-        end
-    end
-    return c
-end
-
-function crypto.parsePkcs12(pk, pass)
+function crypto.decodepkcs12(pk, deviceKey)
+    local pass = util.base64.encode(deviceKey.key)
     local pk = util.base64.decode(pk)
     local decoded, err = pkcs12.decode(pk, pass)
     if err ~= nil then error(err) end
-    print("Decoded PKCS#12: " .. decoded.friendly_name)
-    return decoded.key, decoded.cert
+    return decoded.key
 end
 
 local function sign(key, data)
@@ -154,7 +140,7 @@ local function sha1(data)
     return sha1:final()
 end
 
-function crypto.signXML(key, tb, name)
+function crypto.signXML(name, key, tb)
     local encoded = asn1.element(name, tb)
     return sign(key, sha1(encoded))
 end
