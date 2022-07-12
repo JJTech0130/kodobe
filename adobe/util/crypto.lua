@@ -142,10 +142,26 @@ function crypto.parsePkcs12(pk, pass)
     return decoded.key, decoded.cert
 end
 
-function crypto.sign(pkey, tb, name)
+local function pad_PKCS1(data, key_len)
+    local max_message_length = key_len - 11
+    local length = string.len(data)
+    if length > max_message_length then
+        error("Message is too long to encrypt: " .. length .. " > " .. max_message_length)
+    end
+    local pad_len = key_len - length - 3
+    return string.char(0x00) .. string.char(0x01) .. string.rep(string.char(0xff), pad_len) .. data .. string.char(0x00)
+end
+
+function crypto.sign(key, data, name)
     --print(util.base64.encode(asn1.element(name, tb)))
-    local encoded = asn1.element(name, tb)
-    local sig, err = pkey:sign(encoded, "sha1")
+    --local encoded = asn1.element(name, tb)
+    -- generate sha1 hash of the encoded xml
+    local sha1 = digest.new("SHA1")
+    sha1:update(data)
+    local hash = sha1:final()
+    print("HASH: " .. util.base64.encode(hash))
+    local msg = pad_PKCS1(hash, 128)
+    local sig, err = key:sign_raw(msg, pkey.PADDINGS.RSA_NO_PADDING)
     if err ~= nil then error(err) end
     return util.base64.encode(sig)
     --print("SIGNING:")
