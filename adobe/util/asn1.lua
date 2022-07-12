@@ -111,7 +111,6 @@ function ASN.element(name, content)
     out = out .. ASN.byte(ASN.BEGIN_ELEMENT)
     out = out .. ASN.tag(name)
     if content._attr ~= nil then
-        -- FIXME: sort attributes
         for k, v in orderedPairs(content._attr) do
             out = out .. ASN.attribute(k, v)
         end
@@ -125,7 +124,7 @@ function ASN.element(name, content)
         out = out .. ASN.byte(ASN.TEXT_NODE)
         out = out .. ASN.string(content)
     elseif type(content) == 'table' then
-        -- FIXME: sort elements
+        -- FIXME: is this the right way to sort elements?
         for k, v in orderedPairs(content) do
             out = out .. ASN.element(k, v)
         end
