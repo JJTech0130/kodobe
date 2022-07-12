@@ -9,6 +9,7 @@ local rand    = require("openssl.rand")
 local cipher  = require("openssl.cipher")
 local pkey    = require("openssl.pkey")
 local digest  = require("openssl.digest")
+local pkcs12  = require("openssl.pkcs12")
 
 local util = require("adobe.util.util")
 local asn1 = require("adobe.util.asn1")
@@ -133,8 +134,20 @@ local function xmlconcat(tb)
     return c
 end
 
+function crypto.parsePkcs12(pk, pass)
+    local pk = util.base64.decode(pk)
+    local decoded, err = pkcs12.decode(pk, pass)
+    if err ~= nil then error(err) end
+    print("Decoded PKCS#12: " .. decoded.friendly_name)
+    return decoded.key, decoded.cert
+end
+
 function crypto.sign(pkey, tb, name)
-    print(util.base64.encode(asn1.element(name, tb)))
+    --print(util.base64.encode(asn1.element(name, tb)))
+    local encoded = asn1.element(name, tb)
+    local sig, err = pkey:sign(encoded, "sha1")
+    if err ~= nil then error(err) end
+    return util.base64.encode(sig)
     --print("SIGNING:")
     --print(xmlconcat(tb))
     --print("END SIGNING")

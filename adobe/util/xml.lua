@@ -51,9 +51,11 @@ function xml.adobe(tb, name)
     return tb
 end
 
-function xml.adobeSigned(tb, name)
+function xml.adobeSigned(tb, name, pkey)
     tosign = xml.addNamespace(util.deepTableCopy(tb), "http://ns.adobe.com/adept", "http://ns.adobe.com/adept")
-    crypto.sign(nil, tosign, "http://ns.adobe.com/adept:" .. name)
+    local sig = crypto.sign(pkey, tosign, "http://ns.adobe.com/adept:" .. name)
+    print("Signature: " .. sig)
+    tb.signature = sig
     tb = xml.addNamespace(tb, "adept", "http://ns.adobe.com/adept")
     tb = xml.serialize(tb, "adept:" .. name)
     tb = xml.addHeader(tb)

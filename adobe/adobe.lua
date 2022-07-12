@@ -93,9 +93,10 @@ function adobe.signIn(method, username, password, authCert)
     }
 end
 
-function adobe.activate(user, deviceKey)
+function adobe.activate(user, deviceKey, pkcs12)
     local serial = crypto.serial()
     local fingerprint = crypto.fingerprint(serial, deviceKey)
+    local pkey, cert = crypto.parsePkcs12(pkcs12, util.base64.encode(deviceKey.key))
 
     local activationRequest = xml.adobeSigned({
         _attr = { requestType = "Initial"},
@@ -116,7 +117,7 @@ function adobe.activate(user, deviceKey)
         nonce = crypto.nonce(),
         expiration = util.expiration(10), -- 10 minutes
         user = user
-    }, "activate")
+    }, "activate", pkey)
 
     print(activationRequest)
 
