@@ -23,6 +23,22 @@ function util.tableShallowCopy(original)
     return copy
 end
 
+-- basic deep copy of a table
+function util.deepTableCopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[util.deepTableCopy(orig_key)] = util.deepTableCopy(orig_value)
+        end
+        setmetatable(copy, util.deepTableCopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
 function util.endpoint(base, path)
     local endpoint = util.tableShallowCopy(base)
     endpoint.path = endpoint.path .. "/" .. path
