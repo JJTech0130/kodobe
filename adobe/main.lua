@@ -1,5 +1,3 @@
-package.path = ";./dependencies/?.lua;./dependencies/?/init.lua" .. package.path
-
 -- load required modules
 local adobe = require("adobe.adobe")
 
