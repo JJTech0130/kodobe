@@ -131,8 +131,6 @@ function adobe.activate(user, deviceKey, pkcs12)
         user = user
     })
 
-    --print(activationRequest)
-
     local resp = {}
     http.request{
          url = url.build(util.endpoint(adobe.EDEN_URL, "Activate")),
@@ -142,14 +140,11 @@ function adobe.activate(user, deviceKey, pkcs12)
          source = ltn12.source.string(activationRequest)
     }
     resp = table.concat(resp)
-    --print(resp)
-    -- resp = xml.deserialize(resp)
-    -- 
-    -- if resp.error ~= nil then
-    --     error("Server returned error: " .. resp.error._attr.data)
-    -- elseif resp.credentials == nil then
-    --     error("Server returned unexpected response")
-    --     print(resp)
-    -- end
+    tree = xml.deserialize(resp) 
+    if tree.error ~= nil then
+        error("Server returned error: " .. tree.error._attr.data)
+    end
+
+    return resp -- for now, just return the XML, as I don't know what to do with it yet
 end
 return adobe
