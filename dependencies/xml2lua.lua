@@ -52,6 +52,8 @@
 local xml2lua = {_VERSION = "1.5-2"}
 local XmlParser = require("XmlParser")
 
+local orderedPairs = require("adobe.util.util").orderedPairs
+
 ---Recursivelly prints a table in an easy-to-ready format
 --@param tb The table to be printed
 --@param level the indentation level to start with
@@ -62,7 +64,7 @@ local function printableInternal(tb, level)
   
   level = level or 1
   local spaces = string.rep(' ', level*2)
-  for k,v in pairs(tb) do
+  for k,v in orderedPairs(tb) do
       if type(v) == "table" then
          print(spaces .. k)
          printableInternal(v, level+1)
@@ -113,7 +115,7 @@ function xml2lua.toString(t)
         return t
     end
 
-    for k,v in pairs(t) do
+    for k,v in orderedPairs(t) do
         if type(v) == 'table' then 
             v = xml2lua.toString(v)
         end
@@ -209,7 +211,7 @@ function xml2lua.toXml(tb, tableName, level)
   local xmltb = (tableName ~= '' and level == 1) and {'<'..tableName..attrToXml(tb._attr)..'>'} or {}
   tb._attr = nil
 
-  for k, v in pairs(tb) do
+  for k, v in orderedPairs(tb) do
       if type(v) == 'table' then
          -- If the key is a number, the given table is an array and the value is an element inside that array.
          -- In this case, the name of the array is used as tag name for each element.
