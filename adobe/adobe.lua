@@ -131,7 +131,7 @@ function adobe.activate(user, deviceKey, pkcs12)
         user = user
     })
 
-    print(activationRequest)
+    --print(activationRequest)
 
     local resp = {}
     http.request{
@@ -142,7 +142,7 @@ function adobe.activate(user, deviceKey, pkcs12)
          source = ltn12.source.string(activationRequest)
     }
     resp = table.concat(resp)
-    print(resp)
+    --print(resp)
     -- resp = xml.deserialize(resp)
     -- 
     -- if resp.error ~= nil then
