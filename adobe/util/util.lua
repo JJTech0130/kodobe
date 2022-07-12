@@ -36,4 +36,18 @@ function util.expiration(minutes)
     return os.date("!%Y-%m-%dT%H:%M:%SZ", os.time(t))
 end
 
+-- Example:
+-- for _, k in ipairs(util.sortedKeys(tb)) do
+--     print(k, tb[k])
+-- end
+function util.sortedKeys(tb)
+    local keys = {}
+    for k in pairs(tb) do
+        table.insert(keys, k)
+    end
+
+    table.sort(keys)
+    return keys
+end
+
 return util
