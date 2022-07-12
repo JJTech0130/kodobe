@@ -54,7 +54,7 @@ end
 function xml.adobeSigned(tb, name, pkey)
     tosign = xml.addNamespace(util.deepTableCopy(tb), "http://ns.adobe.com/adept", "http://ns.adobe.com/adept")
     local sig = crypto.signXML(pkey, tosign, "http://ns.adobe.com/adept:" .. name)
-    print("Signature: " .. sig)
+    --print("Signature: " .. sig)
     tb.signature = sig
     tb = xml.addNamespace(tb, "adept", "http://ns.adobe.com/adept")
     tb = xml.serialize(tb, "adept:" .. name)
