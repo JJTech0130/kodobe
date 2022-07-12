@@ -12,6 +12,18 @@ local ltn12  = require("ltn12")             -- HTTP(S) request/response
 -- Eden2 activation service 
 adobe.EDEN_URL = url.parse("https://adeactivate.adobe.com/adept")
 
+adobe.VERSIONS = {
+    { name = 'ADE 1.7.2', version = 'ADE WIN 9,0,1131,27', hobbes = '9.0.1131.27', os = 'Windows Vista', build = 1131 },
+    { name = 'ADE 2.0.1', version = '2.0.1.78765', hobbes = '9.3.58046', os = 'Windows Vista', build = 78765 },
+    { name = 'ADE 3.0.1', version = '3.0.1.91394', hobbes = '10.0.85385', os = 'Windows 8', build = 91394 },
+    { name = 'ADE 4.0.3', version = '4.0.3.123281', hobbes = '12.0.123217', os = 'Windows 8', build = 123281 },
+    { name = 'ADE 4.5.10', version = 'com.adobe.adobedigitaleditions.exe v4.5.10.186048', hobbes = '12.5.4.186049', os = 'Windows 8', build = 186048 },
+    { name = 'ADE 4.5.11', version = 'com.adobe.adobedigitaleditions.exe v4.5.11.187303', hobbes = '12.5.4.187298', os = 'Windows 8', build = 187303 },
+}
+
+-- default to 2.0.1
+adobe.VERSION = adobe.VERSIONS[2]
+
 -- get information about the authentication service
 function adobe.getAuthenticationServiceInfo()
     local response = http.request(url.build(util.endpoint(adobe.EDEN_URL, "AuthenticationServiceInfo")))
@@ -102,14 +114,14 @@ function adobe.activate(user, deviceKey, pkcs12)
         _attr = { requestType = "initial"},
         fingerprint = fingerprint,
         deviceType = "standalone",
-        clientOS = "Windows 8", -- TODO: make this configurable
+        clientOS = adobe.VERSION.os,
         clientLocale = "en",
-        clientVersion = "2.0.1.78765", -- TODO: make this configurable
+        clientVersion = adobe.VERSION.version,
         targetDevice = {
-            softwareVersion = "9.3.58046",
-            clientOS = "Windows 8", -- TODO: make this configurable
+            softwareVersion = adobe.VERSION.hobbes,
+            clientOS = adobe.VERSION.os,
             clientLocale = "en",
-            clientVersion = "2.0.1.78765", -- TODO: make this configurable
+            clientVersion = adobe.VERSION.version,
             deviceType = "standalone",
             productName = "ADOBE Digitial Editions", -- [sic] Yes, the real ADE misspells Digital...
             fingerprint = fingerprint,
