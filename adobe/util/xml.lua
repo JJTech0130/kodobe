@@ -5,6 +5,7 @@ local xml = {}
 -- load required modules
 local xml2lua = require("xml2lua")
 local treehandler = require("xmlhandler.tree")
+local crypto = require("adobe.util.crypto")
 
 -- add an xml namespace to the table
 function xml.addNamespace(tb, prefix, namespace)
@@ -44,6 +45,14 @@ end
 -- shorthand for creating an xml response for adobe
 function xml.adobe(tb, name)
     tb = xml.addNamespace(tb, "adept", "http://ns.adobe.com/adept")
+    tb = xml.serialize(tb, "adept:" .. name)
+    tb = xml.addHeader(tb)
+    return tb
+end
+
+function xml.adobeSigned(tb, name)
+    tb = xml.addNamespace(tb, "http://ns.adobe.com/adept", "http://ns.adobe.com/adept")
+    crypto.sign(nil, tb, "http://ns.adobe.com/adept:" .. name)
     tb = xml.serialize(tb, "adept:" .. name)
     tb = xml.addHeader(tb)
     return tb

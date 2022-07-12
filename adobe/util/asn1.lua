@@ -38,6 +38,7 @@ function ASN.namespacedTag(namespace, name)
 end
 
 function ASN.tag(name)
+    -- FIXME: broken with http(s) namespaces because of :
     local ns = string.match(name, "^[^:]+")
     local tag = string.match(name, "[^:]+$")
     if ns == tag then

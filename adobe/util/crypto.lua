@@ -11,6 +11,7 @@ local pkey    = require("openssl.pkey")
 local digest  = require("openssl.digest")
 
 local util = require("adobe.util.util")
+local asn1 = require("adobe.util.asn1")
 
 -- DEVICE KEY
 crypto.deviceKey = {}
@@ -118,4 +119,28 @@ function crypto.key:topkcs8()
     return util.base64.decode(pkcs8)
 end
 
+local function xmlconcat(tb)
+    local c = ""
+    for k, v in pairs(tb) do
+        if k ~= "_attr" then
+            if type(v) == "table" then
+                c = c .. previewXML(k, xmlconcat(v), "adobe")
+            else
+                c = c .. previewXML(k, v, "adobe")
+            end
+        end
+    end
+    return c
+end
+
+function crypto.sign(pkey, tb, name)
+    print(util.base64.encode(asn1.element(name, tb)))
+    --print("SIGNING:")
+    --print(xmlconcat(tb))
+    --print("END SIGNING")
+    --local signature, err = key.pkey:sign(digest, "SHA1")
+    --if err ~= nil then error(err) end
+    --return util.base64.encode(signature)
+    --return "TODO"
+end
 return crypto
