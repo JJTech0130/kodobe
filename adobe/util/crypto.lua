@@ -142,19 +142,23 @@ function crypto.parsePkcs12(pk, pass)
     return decoded.key, decoded.cert
 end
 
-function crypto.sign(key, data, name)
-    --print(util.base64.encode(asn1.element(name, tb)))
-    --local encoded = asn1.element(name, tb)
-    -- generate sha1 hash of the encoded xml
-    --local sha1 = digest.new("SHA1")
-    --sha1:update(data)
-    --local hash = sha1:final()
-    --print("HASH: " .. util.base64.encode(hash))
-    --local msg = pad_PKCS1(data, 128)
-    --print(util.base64.encode(msg))
+local function sign(key, data)
     local sig, err = key:sign_raw(data, pkey.PADDINGS.RSA_PKCS1_PADDING)
     if err ~= nil then error(err) end
     return util.base64.encode(sig)
+end
+
+function crypto.signXML(key, tb, name)
+    --print(util.base64.encode(asn1.element(name, tb)))
+    local encoded = asn1.element(name, tb)
+    -- generate sha1 hash of the encoded xml
+    local sha1 = digest.new("SHA1")
+    sha1:update(data)
+    local hash = sha1:final()
+    print("HASH: " .. util.base64.encode(hash))
+    --local msg = pad_PKCS1(data, 128)
+    --print(util.base64.encode(msg))
+    return sign(key, hash)
     --print("SIGNING:")
     --print(xmlconcat(tb))
     --print("END SIGNING")
