@@ -38,16 +38,21 @@ function ASN.namespacedTag(namespace, name)
 end
 
 function ASN.tag(name)
-    -- FIXME: broken with http(s) namespaces because of :
-    local ns = string.match(name, "^[^:]+")
-    local tag = string.match(name, "[^:]+$")
-    if ns == tag then
+    -- FIXME: does not work when http: is after the namespace, e.g. for xmlns:http://
+    local ns, tag = string.match(name, "(.+):(.+)")
+    -- there was no colon, so we just have a tag
+    if ns == nil and tag == nil then
         ns = ""
+        tag = name
     end
     return ASN.namespacedTag(ns, tag)
 end
 
 function ASN.attribute(name, value)
+    -- don't add xmlns attributes, as namespaces are fully qualifieds
+    if string.find(name, "xmlns:") then
+        return ""
+    end
     return ASN.byte(ASN.ATTRIBUTE) .. ASN.tag(name) .. ASN.string(value)
 end
 
