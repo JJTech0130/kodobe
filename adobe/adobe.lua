@@ -99,7 +99,7 @@ function adobe.activate(user, deviceKey, pkcs12)
     local pkey, cert = crypto.parsePkcs12(pkcs12, util.base64.encode(deviceKey.key))
 
     local activationRequest = xml.adobeSigned({
-        _attr = { requestType = "Initial"},
+        _attr = { requestType = "initial"},
         fingerprint = fingerprint,
         deviceType = "standalone",
         clientOS = "Windows 8", -- TODO: make this configurable
@@ -121,16 +121,16 @@ function adobe.activate(user, deviceKey, pkcs12)
 
     print(activationRequest)
 
-    -- local resp = {}
-    -- http.request{
-    --     url = url.build(util.endpoint(adobe.EDEN_URL, "ActivateDirect")),
-    --     sink = ltn12.sink.table(resp),
-    --     method = "POST",
-    --     headers = { ["Content-Type"] = "application/vnd.adobe.adept+xml" },
-    --     source = ltn12.source.string(activationRequest)
-    -- }
-    -- resp = table.concat(resp)
-    -- --print(resp)
+    local resp = {}
+    http.request{
+         url = url.build(util.endpoint(adobe.EDEN_URL, "Activate")),
+         sink = ltn12.sink.table(resp),
+         method = "POST",
+         headers = { ["Content-Type"] = "application/vnd.adobe.adept+xml" },
+         source = ltn12.source.string(activationRequest)
+    }
+    resp = table.concat(resp)
+    print(resp)
     -- resp = xml.deserialize(resp)
     -- 
     -- if resp.error ~= nil then
