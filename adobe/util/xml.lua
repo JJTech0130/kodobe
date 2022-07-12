@@ -6,6 +6,7 @@ local xml = {}
 local xml2lua = require("xml2lua")
 local treehandler = require("xmlhandler.tree")
 local crypto = require("adobe.util.crypto")
+local util = require("adobe.util.util")
 
 -- add an xml namespace to the table
 function xml.addNamespace(tb, prefix, namespace)
@@ -51,8 +52,9 @@ function xml.adobe(tb, name)
 end
 
 function xml.adobeSigned(tb, name)
-    tb = xml.addNamespace(tb, "http://ns.adobe.com/adept", "http://ns.adobe.com/adept")
-    crypto.sign(nil, tb, "http://ns.adobe.com/adept:" .. name)
+    tosign = xml.addNamespace(util.deepTableCopy(tb), "http://ns.adobe.com/adept", "http://ns.adobe.com/adept")
+    crypto.sign(nil, tosign, "http://ns.adobe.com/adept:" .. name)
+    tb = xml.addNamespace(tb, "adept", "http://ns.adobe.com/adept")
     tb = xml.serialize(tb, "adept:" .. name)
     tb = xml.addHeader(tb)
     return tb
