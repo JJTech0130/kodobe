@@ -1,4 +1,7 @@
 --- @module encodes table as ASN.1 DER
+-- this module is intended to be self-contained, so it does not depend on any other modules
+-- unfortunately, it has to depend on LuaJIT's bitop module, which is not available on all platforms
+
 
 -- sorting stuff
 local function __genOrderedIndex( t )
@@ -44,6 +47,8 @@ local function orderedPairs(t)
     -- in order
     return orderedNext, t, nil
 end
+
+-- actual asn1 stuff
 
 local bit = require("bit")
 
