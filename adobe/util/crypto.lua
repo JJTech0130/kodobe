@@ -148,25 +148,15 @@ local function sign(key, data)
     return util.base64.encode(sig)
 end
 
-function crypto.signXML(key, tb, name)
-    --print(util.base64.encode(asn1.element(name, tb)))
-    local encoded = asn1.element(name, tb)
-    --print("Encoded: " .. util.base64.encode(encoded))
-    -- generate sha1 hash of the encoded xml
+local function sha1(data)
     local sha1 = digest.new("SHA1")
-    sha1:update(encoded)
-    local hash = sha1:final()
-    --print("HASH: " .. util.base64.encode(hash))
-    --print("HASH: " .. hash)
-    --local msg = pad_PKCS1(data, 128)
-    --print(util.base64.encode(msg))
-    return sign(key, hash)
-    --print("SIGNING:")
-    --print(xmlconcat(tb))
-    --print("END SIGNING")
-    --local signature, err = key.pkey:sign(digest, "SHA1")
-    --if err ~= nil then error(err) end
-    --return util.base64.encode(signature)
-    --return "TODO"
+    sha1:update(data)
+    return sha1:final()
 end
+
+function crypto.signXML(key, tb, name)
+    local encoded = asn1.element(name, tb)
+    return sign(key, sha1(encoded))
+end
+
 return crypto
