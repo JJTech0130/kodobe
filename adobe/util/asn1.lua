@@ -1,56 +1,7 @@
 --- @module encodes table as ASN.1 DER
--- this module is intended to be self-contained, so it does not depend on any other modules
--- unfortunately, it has to depend on LuaJIT's bitop module, which is not available on all platforms
-
-
--- sorting stuff
-local function __genOrderedIndex( t )
-    local orderedIndex = {}
-    for key in pairs(t) do
-        table.insert( orderedIndex, key )
-    end
-    table.sort( orderedIndex )
-    return orderedIndex
-end
-
-local function orderedNext(t, state)
-    -- Equivalent of the next function, but returns the keys in the alphabetic
-    -- order. We use a temporary ordered key table that is stored in the
-    -- table being iterated.
-
-    local key = nil
-    --print("orderedNext: state = "..tostring(state) )
-    if state == nil then
-        -- the first time, generate the index
-        t.__orderedIndex = __genOrderedIndex( t )
-        key = t.__orderedIndex[1]
-    else
-        -- fetch the next value
-        for i = 1,table.getn(t.__orderedIndex) do
-            if t.__orderedIndex[i] == state then
-                key = t.__orderedIndex[i+1]
-            end
-        end
-    end
-
-    if key then
-        return key, t[key]
-    end
-
-    -- no more value to return, cleanup
-    t.__orderedIndex = nil
-    return
-end
-
-local function orderedPairs(t)
-    -- Equivalent of the pairs() function on tables. Allows to iterate
-    -- in order
-    return orderedNext, t, nil
-end
-
--- actual asn1 stuff
 
 local bit = require("bit")
+local util = require("adobe.util.util")
 
 local ASN = {
     NONE = 0,
@@ -111,7 +62,7 @@ function ASN.element(name, content)
     out = out .. ASN.byte(ASN.BEGIN_ELEMENT)
     out = out .. ASN.tag(name)
     if content._attr ~= nil then
-        for k, v in orderedPairs(content._attr) do
+        for k, v in util.orderedPairs(content._attr) do
             out = out .. ASN.attribute(k, v)
         end
         content._attr = nil
@@ -125,7 +76,7 @@ function ASN.element(name, content)
         out = out .. ASN.string(content)
     elseif type(content) == 'table' then
         -- FIXME: is this the right way to sort elements?
-        for k, v in orderedPairs(content) do
+        for k, v in util.orderedPairs(content) do
             out = out .. ASN.element(k, v)
         end
     end
