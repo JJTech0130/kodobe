@@ -105,6 +105,19 @@ function adobe.signIn(method, username, password, authCert)
     }
 end
 
+function adobe.targetDevice(fingerprint, activationToken)
+    return {
+        softwareVersion = adobe.VERSION.hobbes,
+        clientOS = adobe.VERSION.os,
+        clientLocale = "en",
+        clientVersion = adobe.VERSION.version,
+        deviceType = "standalone",
+        productName = "Adobe Digitial Editions", -- [sic]
+        fingerprint = fingerprint,
+        activationToken = activationToken,
+    }
+end
+
 function adobe.activate(user, deviceKey, pkcs12)
     local serial = crypto.serial()
     local fingerprint = crypto.fingerprint(serial, deviceKey)
@@ -117,15 +130,7 @@ function adobe.activate(user, deviceKey, pkcs12)
         clientOS = adobe.VERSION.os,
         clientLocale = "en",
         clientVersion = adobe.VERSION.version,
-        targetDevice = {
-            softwareVersion = adobe.VERSION.hobbes,
-            clientOS = adobe.VERSION.os,
-            clientLocale = "en",
-            clientVersion = adobe.VERSION.version,
-            deviceType = "standalone",
-            productName = "ADOBE Digitial Editions", -- [sic] Yes, the real ADE misspells Digital...
-            fingerprint = fingerprint,
-        },
+        targetDevice = adobe.targetDevice(fingerprint),
         nonce = crypto.nonce(),
         expiration = util.expiration(10), -- 10 minutes
         user = user
@@ -140,11 +145,11 @@ function adobe.activate(user, deviceKey, pkcs12)
          source = ltn12.source.string(activationRequest)
     }
     resp = table.concat(resp)
-    tree = xml.deserialize(resp) 
-    if tree.error ~= nil then
-        error("Server returned error: " .. tree.error._attr.data)
+    resp = xml.deserialize(resp) 
+    if resp.error ~= nil then
+        error("Server returned error: " .. resp.error._attr.data)
     end
-
-    return resp -- for now, just return the XML, as I don't know what to do with it yet
+    
+    return resp.activationToken.device, fingerprint
 end
 return adobe
